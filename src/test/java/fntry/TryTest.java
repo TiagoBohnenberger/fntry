@@ -21,8 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 
 @DisplayNameGeneration(DisplayNameGenerators.ReplaceCamelCase.class)
 class TryTest {
@@ -109,6 +111,31 @@ class TryTest {
         Optional<?> optional = Try.of((Try<?, ?>) null);
 
         assertThat(optional).isEmpty();
+    }
+
+    @Test
+    void givenTryWith_shouldExecuteIntermediaryConsumerOperation_whenNoErrorOccurs() {
+        try (MockedStatic<Functions> functions = mockStatic(Functions.class)) {
+
+            Try.with("Hello World")
+                    .consume(Functions::printAnsiArt)
+                    .orElse(Functions::log);
+
+            functions.verify(() -> Functions.printAnsiArt(anyString()), atLeastOnce());
+            functions.verify(() -> Functions.log(any()), never());
+        }
+    }
+
+    @Test
+    void givenTryWith_shouldExecuteFallbackConsumingOperation_whenAnyErrorOccurs() {
+        try (MockedStatic<Functions> functions = mockStatic(Functions.class)) {
+
+            Try.with("Hello World")
+                    .consume(Exceptions::throwRuntimeException)
+                    .orElse(Functions::log);
+
+            functions.verify(() -> Functions.log(anyString()), atLeastOnce());
+        }
     }
 
     @Test
@@ -249,7 +276,7 @@ class TryTest {
                 .map(foo -> foo.toBar(2))
                 .consume(Consumers::toStringg)
                 .map(bar -> bar.setValue(100))
-                .orElse(Bar::new);
+                .orElseGet(Bar::new);
 
         assertThat(_bar2).is(
                 bar(
