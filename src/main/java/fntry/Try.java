@@ -76,9 +76,9 @@ public interface Try<T, E extends Throwable> {
     static <E extends Throwable> Result<Void> of(ThrowingSimpleFunction<E> supplier) {
         try {
             supplier.apply();
-            return ResultImpl.empty();
+            return Step.empty();
         } catch (Throwable e) {
-            return new ResultImpl<>(e);
+            return Step.failed(e);
         }
     }
 

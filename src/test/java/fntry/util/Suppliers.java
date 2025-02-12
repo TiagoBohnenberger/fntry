@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Suppliers {
 
-    public static Foo newFooWithException() throws Throwable {
+    public static Foo newFooExceptionally() throws Throwable {
         throw new Throwable();
     }
 

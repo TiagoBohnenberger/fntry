@@ -1,5 +1,6 @@
 package fntry;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import jakarta.annotation.Nullable;
 
@@ -8,12 +9,12 @@ import jakarta.annotation.Nullable;
  *
  * @param <T> the result type.
  */
-public interface Result<T> {
+public interface Result<T> extends FallbackStrategy<T> {
 
     /**
      * @return if an operation failed
      */
-    boolean isFailure();
+    boolean isFailed();
 
     /**
      * @return the exception if the result is failure (maybe null).
@@ -27,16 +28,60 @@ public interface Result<T> {
     @Nullable
     T get();
 
-    default void orElse(SimpleFunction fallbackOperation) {
-        if (isFailure()) {
+    /**
+     * @return an {@code Optional<T>} of the result
+     */
+    default Optional<T> asOptional() {
+        return Optional.ofNullable(this.get());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void orElse(ThrowingConsumer<T, ? extends Throwable> fallbackConsumer) {
+        if (this.isFailed()) {
+            Try.lifted(() -> {
+                fallbackConsumer.accept(this.get());
+                return null;
+            });
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default <E extends Throwable> void otherwise(Consumer<E> fallbackThrowingConsumer) {
+        if (this.isFailed()) {
+            fallbackThrowingConsumer.accept(this.getException());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void orSimply(SimpleFunction fallbackOperation) {
+        if (this.isFailed()) {
             fallbackOperation.apply();
         }
     }
 
-    @SuppressWarnings("unchecked")
-    default <E extends Throwable> void orElse(Consumer<E> fallbackOperation) {
-        if (isFailure()) {
-            fallbackOperation.accept((E) getException());
+    /**
+     * {@inheritDoc}
+     */
+    @Nullable
+    @Override
+    default T orThen(UnaryThrowingOperator<T, ? extends Throwable> fallbackConsumer) {
+        T result = this.get();
+        if (this.isFailed()) {
+            try {
+                return fallbackConsumer.apply(result);
+            } catch (Throwable e) {
+                return null;
+            }
         }
+        return result;
     }
 }
