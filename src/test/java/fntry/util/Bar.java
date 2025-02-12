@@ -3,6 +3,8 @@ package fntry.util;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Condition;
+import org.assertj.core.condition.NestableCondition;
 
 @Getter
 @RequiredArgsConstructor
@@ -32,5 +34,14 @@ public class Bar {
 
     public Bar setValue(int newValue) {
         return new Bar(newValue);
+    }
+
+    @SafeVarargs
+    public static <T extends Bar> Condition<T> bar(Condition<T>... conditions) {
+        return NestableCondition.nestable("Bar", conditions);
+    }
+
+    public static Condition<Bar> fieldValueIs(int value) {
+        return new Condition<>(bar -> bar.getField() == value, "field: " + value);
     }
 }

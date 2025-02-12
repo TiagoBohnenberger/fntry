@@ -2,17 +2,25 @@ package fntry;
 
 import jakarta.annotation.Nullable;
 
-public class StepImpl<T> implements Step<T> {
-    private static final StepImpl<?> EMPTY = new StepImpl<>(null);
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.With;
+
+@With(AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+class StepImpl<T> implements Step<T> {
+    private static final StepImpl<?> EMPTY = new StepImpl<>();
 
     @Nullable
-    final T stepResult;
+    private T result;
     @Nullable
-    Throwable throwable;
-    boolean failed;
+    private Throwable throwable;
+    private boolean failed;
 
-    private StepImpl(@Nullable T stepResult, @Nullable Throwable throwable) {
-        this.stepResult = stepResult;
+    private StepImpl(@Nullable T result, @Nullable Throwable throwable) {
+        this.result = result;
 
         if (throwable != null) {
             this.failed = true;
@@ -20,8 +28,8 @@ public class StepImpl<T> implements Step<T> {
         }
     }
 
-    StepImpl(@Nullable T stepResult) {
-        this(stepResult, null);
+    StepImpl(@Nullable T result) {
+        this(result, null);
     }
 
     StepImpl(@Nullable Throwable throwable) {
@@ -29,36 +37,43 @@ public class StepImpl<T> implements Step<T> {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> StepImpl<T> empty() {
+    public static <T> StepImpl<T> empty() {
         return (StepImpl<T>) EMPTY;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T, ANY_RESULT extends Result<T>> ANY_RESULT failed(StepImpl<?> step) {
+        step.failed = true;
+        return (ANY_RESULT) step;
+    }
+
+    static <T> Step<T> failed(Throwable e) {
+        return failed(new StepImpl<>(e));
     }
 
     @Override
     public Step<T> apply(UnaryThrowingOperator<T, ?> function) {
         if (failed) {
-            return failed(this);
+            return this;
         }
 
         try {
-            return new StepImpl<>(function.apply(stepResult));
+            return this.withResult(function.apply(result));
         } catch (Throwable e) {
-            this.throwable = e;
-            return failed(this);
+            return failed(withThrowable(e));
         }
     }
 
-
     @Override
     public <E extends Throwable> Step<T> consume(ThrowingConsumer<T, E> consumer) {
-        if (failed) {
-            return failed(this);
+        if (this.failed) {
+            return this;
         }
 
         try {
-            consumer.accept(stepResult);
+            consumer.accept(result);
         } catch (Throwable e) {
-            this.throwable = e;
-            return failed(this);
+            return failed(withThrowable(e));
         }
         return this;
     }
@@ -70,18 +85,10 @@ public class StepImpl<T> implements Step<T> {
         }
 
         try {
-            return new StepImpl<>(function.apply(stepResult));
+            return new StepImpl<>(function.apply(result));
         } catch (Throwable e) {
-            this.throwable = e;
-            return failed(this);
+            return failed(withResult(null).withThrowable(e));
         }
-    }
-
-
-    @Nullable
-    @Override
-    public T orElsePrevious() {
-        return this.stepResult;
     }
 
     @Override
@@ -89,17 +96,28 @@ public class StepImpl<T> implements Step<T> {
         if (this.failed) {
             return other;
         }
-        return this.stepResult;
+        return this.result;
+    }
+
+    public Result<T> getResult() {
+        return this;
     }
 
     @Override
-    public Result<T> getResult() {
-        return new ResultImpl<>(this);
+    public boolean isFailed() {
+        return failed;
     }
 
     @SuppressWarnings("unchecked")
-    static <ANY_STEP> ANY_STEP failed(StepImpl<?> step) {
-        step.failed = true;
-        return (ANY_STEP) step;
+    @Nullable
+    @Override
+    public <E extends Throwable> E getException() {
+        return (E) this.throwable;
+    }
+
+    @Nullable
+    @Override
+    public T get() {
+        return result;
     }
 }
