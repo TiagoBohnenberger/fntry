@@ -5,25 +5,31 @@ import java.util.function.Consumer;
 import jakarta.annotation.Nullable;
 
 /**
- * Represents a result of a {@link Try try} operation.
+ * Represents a result of some operation.
+ *
+ * <p>This operation can be either an intermediate {@linkplain Step step}
+ * or a final one in a sequence of chained operations.
  *
  * @param <T> the result type.
  */
 public interface Result<T> extends FallbackStrategy<T> {
 
     /**
-     * @return if an operation failed
+     * @return if an operation has failed due to any exception that might occur.
      */
     boolean isFailed();
 
     /**
-     * @return the exception if the result is failure (maybe null).
+     * @param <E> the type o the error
+     * @return The exception responsible for this failing {@code Result}, if that
+     * is the case.
+     * It might be {@code null}
      */
     @Nullable
     <E extends Throwable> E getException();
 
     /**
-     * @return the result of the operation (maybe null).
+     * @return the result of the operation (might be {@code null})
      */
     @Nullable
     T get();

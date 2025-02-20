@@ -1,12 +1,12 @@
 package fntry;
 
 /**
- * Encapsulates any operation that receive an argument and could result on an exception.
+ * Encapsulates any operation that receives an argument and could result on an exception.
  *
- * @see UnaryThrowingOperator
  * @param <T> type of the argument
  * @param <R> type of the operation's result
  * @param <E> possible exception's type
+ * @see UnaryThrowingOperator
  */
 @FunctionalInterface
 public interface ThrowingFunction<T, R, E extends Throwable> {

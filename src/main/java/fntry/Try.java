@@ -4,14 +4,13 @@ import java.util.Optional;
 
 /**
  * Represents an attempt at some operation.
- * <p>
- * Adapts the java's try block into a functional style, avoiding "hadouken code" when code requires multiple operations
- * subject to exceptions, or when it's needed to execute simple inline operations that must not break the code.
- * </p>
- * So, here's a simple example:
- * <pre>
- * {@code
  *
+ * <p>Adapts the java's try block into a functional style, avoiding "hadouken code"
+ * when code requires multiple operations subject to exceptions, or when it's
+ * necessary to execute simple inline operations that must not break the code.
+ *
+ * <p>So, here's a simple example:
+ * <blockquote><pre>
  * // a code like this...
  *  try {
  *      someString.trim();
@@ -23,18 +22,20 @@ import java.util.Optional;
  *  } catch (NullPointerException e) {
  *      someOtherString = "";
  *  }
- * }
- * </pre>
- * ...could be written on this way:
- * <pre>
- *
- * {@code
- *  Try.of(() -> someString.trim()).orElse("");
- *  Try.of(() -> someOtherString.trim()).orElse("");
- * }
- * </pre>
- * <p>
+ * </pre></blockquote><p>
+ * ...could be written in this way:
+ * <blockquote><pre>
+ *      Try.of(someString::trim()).orElse("");
+ *      Try.of(someOtherString::trim()).orElse("");
+ * </pre></blockquote><p>
  * making it way more readable.
+ *
+ * <p>A try operation can also return a value that is the type {@code <T>} of this {@code Try} instance.
+ *
+ * <p>This functional interface's method is {@link #apply()} and has the following signature:
+ * <blockquote><pre>
+ *     T apply() throws E;
+ * </pre></blockquote>
  *
  * @param <T> type of the result
  * @param <E> checked exception
@@ -43,18 +44,18 @@ import java.util.Optional;
 public interface Try<T, E extends Throwable> {
 
     /**
-     * Applies the try and returns the result
+     * Runs a try and returns the result.
      *
      * @return the try operation result type
-     * @throws E type that can be thrown
+     * @throws E type that can be thrown by the try operation
      */
     T apply() throws E;
 
     /**
-     * Try to apply a function and wrap the underlying checked exception into an unchecked exception
+     * Try to apply a function and wrap the underlying checked exception into an unchecked exception.
      *
-     * @param function a try function
-     * @param <T>      the type of the function
+     * @param aTry a try function
+     * @param <T>  the type of the {@code Try}
      * @return the lifted value
      * @throws RuntimeException when any throwable occur
      */
@@ -67,11 +68,12 @@ public interface Try<T, E extends Throwable> {
     }
 
     /**
-     * Receives a simple operation and try to apply it
+     * Receives a {@link ThrowingSimpleFunction} operation and try to apply it.
      *
      * @param supplier the simple operation
      * @param <E>      type that can be thrown
-     * @return {@link Result} of {@link Void}
+     * @return {@link Result} of {@link Void}, representing a result with no
+     * contained value
      */
     static <E extends Throwable> Result<Void> just(ThrowingSimpleFunction<E> supplier) {
         try {
@@ -83,12 +85,14 @@ public interface Try<T, E extends Throwable> {
     }
 
     /**
-     * <p>Receives a {@link Try} operation and return an {@link Optional} for the result.</p>
-     * <p>If the try failed for because of any exception, return an empty optional.</p>
+     * Receives a {@linkplain Try} instance and return an {@link Optional} for the result.
      *
-     * @param function the try operation
-     * @param <T>      type of try
-     * @return optional
+     * <p>If the try failed because of any exception, return an empty {@code optional}.
+     *
+     * @param aTry the try instance
+     * @param <T>  type of try
+     * @param <E>  type of the exception that the try can throw
+     * @return {@code Optional<T>}
      */
     static <T, E extends Throwable> Optional<T> get(Try<T, ? extends E> aTry) {
         try {

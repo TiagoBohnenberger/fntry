@@ -6,13 +6,14 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * A representation of a fallback strategy to take when a {@link Result result} fails
+ * A representation of a fallback strategy to be executed when a {@linkplain Result result} fails.
  *
  * @param <T> the type of the fallback result value
  */
 public interface FallbackStrategy<T> {
 
     /**
+     * @param other to provide in case the {@code Result} fails.
      * @return other result value if this fails
      */
     T orElse(T other);
