@@ -42,7 +42,7 @@ public interface Step<T> extends Result<T> {
      * @param <E>      type of the exception
      * @return the step
      */
-    <U, E extends Throwable> Step<U> map(ThrowingFunction<T, ? extends U, E> function);
+    <U, E extends Throwable> Result<U> map(ThrowingFunction<T, ? extends U, E> function);
 
     /**
      * Apply an operation that returns the same Step of type

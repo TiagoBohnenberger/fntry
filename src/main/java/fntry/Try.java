@@ -58,9 +58,9 @@ public interface Try<T, E extends Throwable> {
      * @return the lifted value
      * @throws RuntimeException when any throwable occur
      */
-    static <T> T lifted(Try<? extends T, ?> function) {
+    static <T> T lifted(Try<? extends T, ?> aTry) {
         try {
-            return function.apply();
+            return aTry.apply();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +73,7 @@ public interface Try<T, E extends Throwable> {
      * @param <E>      type that can be thrown
      * @return {@link Result} of {@link Void}
      */
-    static <E extends Throwable> Result<Void> of(ThrowingSimpleFunction<E> supplier) {
+    static <E extends Throwable> Result<Void> just(ThrowingSimpleFunction<E> supplier) {
         try {
             supplier.apply();
             return Step.empty();
@@ -90,44 +90,40 @@ public interface Try<T, E extends Throwable> {
      * @param <T>      type of try
      * @return optional
      */
-    static <T> Optional<T> of(Try<? extends T, ? extends Throwable> function) {
+    static <T, E extends Throwable> Optional<T> get(Try<T, ? extends E> aTry) {
         try {
-            return Optional.ofNullable(function.apply());
+            return Optional.ofNullable(aTry.apply());
         } catch (Throwable e) {
             return Optional.empty();
         }
     }
 
     /**
-     * <p>
+     * Initiates an <a href="{@docRoot}/fntry/Step.html#operation-chain-summary">operation chain</a>
+     * with {@linkplain Try a try}.
+     *
+     * @param aTry the try operation
+     * @param <T>  the type of the provided value
+     * @return a {@linkplain Step} containing the initial value (that might be {@code null})
+     */
+    static <T> Step<T> of(Try<T, ? extends Throwable> aTry) {
+        T value;
+        try {
+            value = aTry.apply();
+        } catch (Throwable e) {
+            return Step.failed(e);
+        }
+        return with(value);
+    }
+
+    /**
      * Initiates an operation chain with a given value.
-     * </p>
      *
      * @param initValue the initial value for the operation chain
      * @param <T>       the type of the provided value
      * @return a {@link Step} containing the initial value
      */
     static <T> Step<T> with(T initValue) {
-        return new StepImpl<>(initValue);
-    }
-
-    /**
-     * <p>
-     * Initiates an operation chain with a {@link ThrowingSupplier supplier} of value.
-     * </p>
-     *
-     * @param initValueSupplier value supplier
-     * @param <T>               the type of the provided value
-     * @param <E>               type that can be thrown
-     * @return a {@link Step} containing the initial value
-     */
-    static <T, E extends Throwable> Step<T> with(ThrowingSupplier<T, E> initValueSupplier) {
-        T value;
-        try {
-            value = initValueSupplier.get();
-        } catch (Throwable e) {
-            return new StepImpl<>(e);
-        }
-        return with(value);
+        return Step.with(initValue);
     }
 }
