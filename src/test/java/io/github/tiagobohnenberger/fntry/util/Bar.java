@@ -1,4 +1,4 @@
-package fntry.util;
+package io.github.tiagobohnenberger.fntry.util;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

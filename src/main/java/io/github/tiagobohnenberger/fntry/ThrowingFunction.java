@@ -1,4 +1,4 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 /**
  * Encapsulates any operation that receives an argument and could result on an exception.

@@ -1,4 +1,4 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 /**
  * Represents a step in a chain of operations.

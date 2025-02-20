@@ -1,8 +1,8 @@
-package fntry.util;
+package io.github.tiagobohnenberger.fntry.util;
 
 import java.util.function.Predicate;
 
-import fntry.Result;
+import io.github.tiagobohnenberger.fntry.Result;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

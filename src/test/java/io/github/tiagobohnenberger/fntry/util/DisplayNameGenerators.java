@@ -1,4 +1,4 @@
-package fntry.util;
+package io.github.tiagobohnenberger.fntry.util;
 
 import java.lang.reflect.Method;
 

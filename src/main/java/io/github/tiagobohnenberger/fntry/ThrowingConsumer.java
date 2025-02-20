@@ -1,4 +1,4 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 /**
  * A {@link java.util.function.Consumer Consumer} that could throw a checked exception.
