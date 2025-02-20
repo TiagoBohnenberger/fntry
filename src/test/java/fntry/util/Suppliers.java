@@ -9,8 +9,9 @@ public class Suppliers {
         throw new Throwable();
     }
 
-    public static Foo newFooWithExceptionOK() throws Throwable {
-        return Suppliers.newFoo();
+    @SuppressWarnings("RedundantThrows")
+    public static <T> T throwingNewFoo() throws Throwable {
+        return null;
     }
 
     public static Foo newFoo() {

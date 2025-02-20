@@ -79,9 +79,9 @@ class StepImpl<T> implements Step<T> {
     }
 
     @Override
-    public <U, E extends Throwable> Step<U> map(ThrowingFunction<T, ? extends U, E> function) {
+    public <U, E extends Throwable> Result<U> map(ThrowingFunction<T, ? extends U, E> function) {
         if (failed) {
-            return failed(this);
+            return failed(withResult(null));
         }
 
         try {
