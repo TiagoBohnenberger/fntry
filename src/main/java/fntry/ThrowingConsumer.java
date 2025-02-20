@@ -2,12 +2,10 @@ package fntry;
 
 /**
  * A {@link java.util.function.Consumer Consumer} that could throw a checked exception.
- * <pre>
- *   {@code
- *       Try.with(Suppliers::userNotes)
- *           .map(Consumers::forNotes);
- *   }
- *  </pre>
+ * <pre class="code"><code class="java">
+ *     Try.with(Suppliers::userNotes)
+ *          .map(Consumers::forNotes);
+ *  </code></pre>
  *
  * @param <T> the type to consume
  * @param <E> them throwable type
