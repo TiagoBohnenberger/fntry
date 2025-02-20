@@ -1,27 +1,27 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 import java.util.Optional;
 
-import fntry.util.Bar;
-import fntry.util.Consumers;
-import fntry.util.DisplayNameGenerators;
-import fntry.util.Exceptions;
-import fntry.util.Foo;
-import fntry.util.Functions;
-import fntry.util.Suppliers;
+import io.github.tiagobohnenberger.fntry.util.Bar;
+import io.github.tiagobohnenberger.fntry.util.Consumers;
+import io.github.tiagobohnenberger.fntry.util.DisplayNameGenerators;
+import io.github.tiagobohnenberger.fntry.util.Exceptions;
+import io.github.tiagobohnenberger.fntry.util.Foo;
+import io.github.tiagobohnenberger.fntry.util.Functions;
+import io.github.tiagobohnenberger.fntry.util.Suppliers;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.MockedStatic;
 
-import static fntry.util.Bar.bar;
-import static fntry.util.Bar.fieldValueIs;
-import static fntry.util.Foo.dummyValueIs;
-import static fntry.util.Foo.foo;
-import static fntry.util.Foo.success;
-import static fntry.util.Functions.logError;
-import static fntry.util.Functions.toUpperCaseExceptionally;
+import static io.github.tiagobohnenberger.fntry.util.Bar.bar;
+import static io.github.tiagobohnenberger.fntry.util.Bar.fieldValueIs;
+import static io.github.tiagobohnenberger.fntry.util.Foo.dummyValueIs;
+import static io.github.tiagobohnenberger.fntry.util.Foo.foo;
+import static io.github.tiagobohnenberger.fntry.util.Foo.success;
+import static io.github.tiagobohnenberger.fntry.util.Functions.logError;
+import static io.github.tiagobohnenberger.fntry.util.Functions.toUpperCaseExceptionally;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;

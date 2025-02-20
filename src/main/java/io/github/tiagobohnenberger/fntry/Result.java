@@ -1,4 +1,4 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 import java.util.Optional;
 import java.util.function.Consumer;

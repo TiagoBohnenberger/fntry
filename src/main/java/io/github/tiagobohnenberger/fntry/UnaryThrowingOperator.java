@@ -1,4 +1,4 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 /**
  * Represents an operation on a single operand that produces a result of

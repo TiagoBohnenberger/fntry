@@ -1,4 +1,4 @@
-package fntry;
+package io.github.tiagobohnenberger.fntry;
 
 /**
  * Simple function to use in <i>lambda</i> operations that doesn't receive any
