@@ -13,20 +13,20 @@ import java.util.Optional;
  * <blockquote><pre>
  * // a code like this...
  *  try {
- *      someString.trim();
+ *      someString = someString.trim();
  *  } catch (NullPointerException e) {
  *      someString = "";
  *  }
  *  try {
- *      someOtherString.trim();
+ *      someOtherString = someOtherString.trim();
  *  } catch (NullPointerException e) {
  *      someOtherString = "";
  *  }
  * </pre></blockquote><p>
  * ...could be written in this way:
  * <blockquote><pre>
- *      Try.of(someString::trim()).orElse("");
- *      Try.of(someOtherString::trim()).orElse("");
+ *      someString = Try.of(someString::trim()).orElse("");
+ *      someOtherString = Try.of(someOtherString::trim()).orElse("");
  * </pre></blockquote><p>
  * making it way more readable.
  *
