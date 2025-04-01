@@ -30,11 +30,11 @@ try {
 
 into code like this:
 ```java
-someString = Try.of(someString::trim()).orElse("");
-someOtherString = Try.of(someOtherString::trim()).orElse("")
+someString = Try.of(someString::trim).orElse("");
+someOtherString = Try.of(someOtherString::trim).orElse("")
 ```
 
-Or simply try to close some external resource, and if it's not possible, log the error:
+Or try to close some external resource, and if it's not possible, log the error:
 ```java
 Try.just(bufferedReader::close)
     .otherwise(ex -> log.error("Error on auto closing", ex));
