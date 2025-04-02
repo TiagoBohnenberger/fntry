@@ -1,5 +1,7 @@
 package io.github.tiagobohnenberger.fntry;
 
+import java.util.function.Predicate;
+
 /**
  * Represents a step in a chain of operations.
  *
@@ -71,4 +73,13 @@ public interface Step<T> extends Result<T> {
      * @return the {@code Result<T>}
      */
     Result<T> getResult();
+
+    /**
+     * If the result value is present in this {@code Step<T>} and
+     * matches the given predicate, return a {@code Step<T>} containing the filtered value.
+     *
+     * @param predicate the predicate to apply to the value, if present
+     * @return a {@code Step<T>} containing the matched value
+     */
+    Step<T> filter(Predicate<T> predicate);
 }

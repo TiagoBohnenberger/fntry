@@ -1,5 +1,6 @@
 package io.github.tiagobohnenberger.fntry;
 
+import java.util.function.Predicate;
 import jakarta.annotation.Nullable;
 
 import lombok.AccessLevel;
@@ -93,7 +94,7 @@ class StepImpl<T> implements Step<T> {
 
     @Override
     public T orElse(T other) {
-        if (this.failed) {
+        if (this.failed || this.result == null) {
             return other;
         }
         return this.result;
@@ -101,6 +102,20 @@ class StepImpl<T> implements Step<T> {
 
     public Result<T> getResult() {
         return this;
+    }
+
+    @Override
+    public Step<T> filter(Predicate<T> predicate) {
+        final StepImpl<T> stepWithNullResult = this.withResult(null);
+
+        if (this.failed || result == null) {
+            return stepWithNullResult;
+        }
+
+        return Try.of(() -> predicate.test(result)
+                        ? this
+                        : stepWithNullResult)
+                .orElse(stepWithNullResult);
     }
 
     @Override
