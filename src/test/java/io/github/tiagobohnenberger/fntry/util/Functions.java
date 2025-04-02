@@ -33,4 +33,8 @@ public class Functions {
         System.out.println(obj);
         return obj;
     }
+
+    public static <T> boolean predicateExceptionally(T obj) {
+        throw new RuntimeException();
+    }
 }

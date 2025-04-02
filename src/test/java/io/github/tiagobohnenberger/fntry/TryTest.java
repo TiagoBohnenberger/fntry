@@ -167,6 +167,32 @@ class TryTest {
     }
 
     @Test
+    void givenTryWith_shouldReturnFallbackValue_whenIntermediateOperationProducesNull() {
+        Bar bar = Try.with(new Foo(10))
+                .map(foo -> (Bar) null)
+                .orElseGet(() -> new Bar(1));
+
+        assertThat(bar).isNotNull().is(bar(fieldValueIs(1)));
+    }
+
+    @Test
+    void givenTryWith_shouldReturnFallbackValue_whenInitialValueIsNull() {
+        Bar bar = Try.with((Foo) null)
+                .map(foo -> foo.toBar(2))
+                .orElseGet(() -> new Bar(1));
+
+        assertThat(bar).isNotNull().is(bar(fieldValueIs(1)));
+    }
+
+    @Test
+    void givenTryWith_shouldReturnFallbackValue_whenInitialValueIsNullV2() {
+        Bar bar = Try.with((Bar) null)
+                .orElseGet(() -> new Bar(1));
+
+        assertThat(bar).isNotNull().is(bar(fieldValueIs(1)));
+    }
+
+    @Test
     void givenTryOf_shouldReturnFailure_whenProvidedFunctionIsNull() {
         Result<Foo> result = Try.of((Try<Foo, ?>) null)
                 .consume(Consumers::println);
@@ -289,6 +315,15 @@ class TryTest {
     }
 
     @Test
+    void givenTryOf_shouldReturnFallbackValue_whenIntermediateOperationProducesNull() {
+        Foo afoo = Try.of(() -> new Foo(10))
+                .apply(foo -> null)
+                .orElseGet(() -> new Foo(2));
+
+        assertThat(afoo).isNotNull().is(foo(dummyValueIs(2)));
+    }
+
+    @Test
     void givenNonNullInitialValue_TryOfShouldReturnIntermediaryOperationResultValue_whenNoErrorOccurs() {
         Foo foo1 = Suppliers.newFoo();
         Foo foo2 = Try.with(foo1).apply(Foo::copy).orElse(foo1);
@@ -407,6 +442,82 @@ class TryTest {
         // @formatter:on
     }
 
+    @Test
+    void shouldReturnFallbackResult_whenValueGetsFilteredOut() {
+        Foo afoo = Try.of(() -> new Foo(10))
+                .filter(foo -> foo.getDummyValue() == 1)
+                .orElseGet(() -> new Foo(2));
+
+        assertThat(afoo)
+                .isNotNull()
+                .is(foo(dummyValueIs(2)));
+    }
+
+    @Test
+    void shouldReturnEmptyOptional_whenValueGetsFilteredOut() {
+        Optional<Foo> afoo = Try.of(() -> new Foo(1))
+                .filter(foo -> foo.getDummyValue() == 2)
+                .asOptional();
+
+        assertThat(afoo).isEmpty();
+    }
+
+    @Test
+    void shouldReturnNonEmptyOptional_whenPredicateEvaluatesToTrue() {
+        Optional<Foo> afoo = Try.of(() -> new Foo(1))
+                .filter(foo -> foo.getDummyValue() == 1)
+                .asOptional();
+
+        assertThat(afoo).isNotEmpty();
+    }
+
+    @Test
+    void shouldReturnFilteredResult_whenPredicateEvaluatesToTrue() {
+        Foo afoo = Try.of(() -> new Foo(1))
+                .filter(foo -> foo.getDummyValue() == 1)
+                .orElseGet(() -> new Foo(2));
+
+        assertThat(afoo)
+                .isNotNull()
+                .is(foo(dummyValueIs(1)));
+    }
+
+    @Test
+    void shouldReturnFallbackResult_whenTryingToFilterOnNullValue() {
+        Foo afoo = Try.of(() -> (Foo) null)
+                .filter(foo -> foo.getDummyValue() == 1)
+                .orElseGet(() -> new Foo(3));
+
+        assertThat(afoo)
+                .isNotNull()
+                .is(foo(dummyValueIs(3)));
+    }
+
+    @Test
+    void shouldReturnFallbackResult_whenInitialOperationThrowsException() {
+        Foo afoo = Try.of(Suppliers::newFooExceptionally)
+                .filter(foo -> foo.getDummyValue() == 1)
+                .consume(System.out::println)
+                .apply(Foo::copy)
+                .orElseGet(() -> new Foo(3));
+
+        assertThat(afoo)
+                .isNotNull()
+                .is(foo(dummyValueIs(3)));
+    }
+
+    @Test
+    void shouldReturnFallbackResult_whenPredicateThrowsException() {
+        Foo afoo = Try.of(Suppliers::newFoo)
+                .filter(Functions::predicateExceptionally)
+                .consume(System.out::println)
+                .apply(Foo::copy)
+                .orElseGet(() -> new Foo(3));
+
+        assertThat(afoo)
+                .isNotNull()
+                .is(foo(dummyValueIs(3)));
+    }
 
     // ---- private methods
 

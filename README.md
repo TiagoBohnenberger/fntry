@@ -52,7 +52,7 @@ To include **FnTry** in your project, add the following dependency to your `pom.
 <dependency>
     <groupId>io.github.tiagobohnenberger</groupId>
     <artifactId>fntry</artifactId>
-    <version>1.0.0</version>
+    <version>${fntry.version}</version>
 </dependency>
 ```
 Java 8 or later is required to use this library.
